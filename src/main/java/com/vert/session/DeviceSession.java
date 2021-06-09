@@ -1,5 +1,6 @@
 package com.vert.session;
 
+import com.vert.core.ProtocolSupport;
 import com.vert.message.codec.EncodedMessage;
 
 /**
@@ -12,7 +13,7 @@ public interface DeviceSession {
 
   String deviceId();
 
-
+  ProtocolSupport protocolSupport();
 
   void  send(EncodedMessage mqttMessage);
 

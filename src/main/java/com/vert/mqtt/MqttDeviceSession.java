@@ -1,5 +1,6 @@
 package com.vert.mqtt;
 
+import com.vert.core.ProtocolSupport;
 import com.vert.message.codec.EncodedMessage;
 import com.vert.message.codec.MqttMessage;
 import com.vert.session.DeviceSession;
@@ -20,9 +21,11 @@ public class MqttDeviceSession implements DeviceSession {
 
 
   private MqttEndpoint endpoint;
+  private  ProtocolSupport protocolSupport;
   Long  lastPingTime  = System.currentTimeMillis();
-  public MqttDeviceSession(MqttEndpoint mqttEndpoint) {
+  public MqttDeviceSession(MqttEndpoint mqttEndpoint,ProtocolSupport protocolSupport) {
     this.endpoint = mqttEndpoint;
+    this.protocolSupport =protocolSupport;
   }
 
   @Override
@@ -33,6 +36,12 @@ public class MqttDeviceSession implements DeviceSession {
   @Override
   public String deviceId() {
     return  endpoint.clientIdentifier();
+  }
+
+  @Override
+  public ProtocolSupport protocolSupport() {
+
+    return protocolSupport;
   }
 
 

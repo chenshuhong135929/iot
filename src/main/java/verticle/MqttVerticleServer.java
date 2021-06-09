@@ -1,5 +1,6 @@
 package verticle;
 
+import com.vert.core.support.M2MIoTProtocolSupport;
 import com.vert.message.DeviceMessage;
 import com.vert.mqtt.MqttDeviceSession;
 import com.vert.mqtt.VertxMqttMessage;
@@ -64,7 +65,7 @@ public class MqttVerticleServer extends AbstractVerticle {
         }else {
 
           logger.debug("成功=======================");
-          accept(endpoint, new MqttDeviceSession(endpoint));
+          accept(endpoint, new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport()));
         }
       });
 
@@ -102,7 +103,7 @@ public class MqttVerticleServer extends AbstractVerticle {
       //处理客户端发布的消息
       endpoint.publishHandler(message -> {
         System.out.println(endpoint.clientIdentifier());
-        handleMqttMessage( new MqttDeviceSession(endpoint), endpoint, message);
+        handleMqttMessage( new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport()), endpoint, message);
         logger.debug("客户端topic:       "+message.topicName()+"客户端消息 [" + message.payload().toString(Charset.defaultCharset()) + " 级别 QoS [" + message.qosLevel() + "]");
         if (message.qosLevel() == MqttQoS.AT_LEAST_ONCE) {
           endpoint.publishAcknowledge(message.messageId());
@@ -235,6 +236,7 @@ public class MqttVerticleServer extends AbstractVerticle {
 
   protected DeviceMessage decodeMessage(DeviceSession session, MqttEndpoint endpoint , VertxMqttMessage message ){
     String deviceId = message.deviceId();
+    session.protocolSupport();
     return null;
 
   }
