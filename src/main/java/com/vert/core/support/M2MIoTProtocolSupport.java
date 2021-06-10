@@ -3,6 +3,7 @@ package com.vert.core.support;
 import cn.hutool.core.util.StrUtil;
 import com.iot.core.device.DeviceOperation;
 import com.vert.core.ProtocolSupport;
+import com.vert.message.codec.DeviceMessageCodec;
 import com.vert.registry.AuthenticationRequest;
 import com.vert.registry.AuthenticationResponse;
 import com.vert.registry.MqttAuthenticationRequest;
@@ -31,6 +32,13 @@ public class M2MIoTProtocolSupport implements ProtocolSupport {
   @Override
   public String description() {
     return  "M2MIoT 协议";
+  }
+
+  @Override
+  public DeviceMessageCodec messageCodec() {
+
+
+    return new M2MIoTDeviceMessageCodec();
   }
 
 

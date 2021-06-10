@@ -1,5 +1,6 @@
 package com.mqtt.start;
 
+import com.iot.core.device.DeviceRegistryMqttCache;
 import com.vert.session.DefaultDeviceSessionManager;
 
 import io.vertx.core.Vertx;
@@ -24,6 +25,6 @@ public class MainLauncher  {
     mqttServerOptions.setPort(1883);
     DefaultDeviceSessionManager defaultDeviceSessionManager = new DefaultDeviceSessionManager();
     defaultDeviceSessionManager.init();
-    vertx.deployVerticle( new MqttVerticleServer(defaultDeviceSessionManager,mqttServerOptions));
+    vertx.deployVerticle( new MqttVerticleServer(defaultDeviceSessionManager,mqttServerOptions,new DeviceRegistryMqttCache()));
   }
   }

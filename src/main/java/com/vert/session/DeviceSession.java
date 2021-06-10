@@ -1,5 +1,6 @@
 package com.vert.session;
 
+import com.iot.core.device.DeviceOperation;
 import com.vert.core.ProtocolSupport;
 import com.vert.message.codec.EncodedMessage;
 
@@ -14,7 +15,7 @@ public interface DeviceSession {
   String deviceId();
 
   ProtocolSupport protocolSupport();
-
+  DeviceOperation operation();
   void  send(EncodedMessage mqttMessage);
 
   void close();

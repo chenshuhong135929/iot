@@ -1,5 +1,6 @@
 package com.vert.mqtt;
 
+import com.iot.core.device.DeviceOperation;
 import com.vert.core.ProtocolSupport;
 import com.vert.message.codec.EncodedMessage;
 import com.vert.message.codec.MqttMessage;
@@ -11,6 +12,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.mqtt.MqttEndpoint;
 
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 /**
  * @Auther ChenShuHong
@@ -19,13 +21,27 @@ import java.nio.charset.StandardCharsets;
 public class MqttDeviceSession implements DeviceSession {
   final InternalLogger log = Log4JLoggerFactory.getInstance(MqttDeviceSession.class);
 
-
+  //会话基础信息
   private MqttEndpoint endpoint;
+  //设备协议
   private  ProtocolSupport protocolSupport;
+  //设备操作的回掉
+  private Function<String, DeviceOperation>operationSupplier;
+
+
+
+
   Long  lastPingTime  = System.currentTimeMillis();
-  public MqttDeviceSession(MqttEndpoint mqttEndpoint,ProtocolSupport protocolSupport) {
+
+
+  public MqttDeviceSession(MqttEndpoint mqttEndpoint, ProtocolSupport protocolSupport, Function<String, DeviceOperation>operationSupplier ) {
     this.endpoint = mqttEndpoint;
     this.protocolSupport =protocolSupport;
+    this.operationSupplier =operationSupplier;
+  }
+
+  public MqttDeviceSession(MqttEndpoint endpoint) {
+    this.endpoint = endpoint;
   }
 
   @Override
@@ -42,6 +58,11 @@ public class MqttDeviceSession implements DeviceSession {
   public ProtocolSupport protocolSupport() {
 
     return protocolSupport;
+  }
+
+  @Override
+  public DeviceOperation operation() {
+    return operationSupplier.apply(deviceId());
   }
 
 

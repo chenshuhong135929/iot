@@ -1,7 +1,12 @@
 package verticle;
 
+import com.iot.core.device.DeviceOperation;
+import com.iot.core.device.DeviceRegistry;
 import com.vert.core.support.M2MIoTProtocolSupport;
 import com.vert.message.DeviceMessage;
+import com.vert.message.codec.EncodedMessage;
+import com.vert.message.codec.FromDeviceMessageContext;
+import com.vert.message.codec.Transport;
 import com.vert.mqtt.MqttDeviceSession;
 import com.vert.mqtt.VertxMqttMessage;
 import com.vert.registry.AuthenticationResponse;
@@ -25,6 +30,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -38,12 +44,13 @@ public class MqttVerticleServer extends AbstractVerticle {
   final InternalLogger logger= Log4JLoggerFactory.getInstance(MqttVerticleServer.class);
 
   private DeviceSessionManager deviceSessionManager;
+  private DeviceRegistry deviceRegistry;
   private MqttServerOptions mqttServerOptions;
   String publicServerAddress;
-  public MqttVerticleServer(  DeviceSessionManager deviceSessionManager, MqttServerOptions mqttServerOptions) {
-
+  public MqttVerticleServer(  DeviceSessionManager deviceSessionManager, MqttServerOptions mqttServerOptions,DeviceRegistry deviceRegistry) {
+    this.mqttServerOptions=mqttServerOptions;
     this.deviceSessionManager = deviceSessionManager;
-    this.mqttServerOptions = mqttServerOptions;
+    this.deviceRegistry = deviceRegistry;
   }
 
 
@@ -65,7 +72,7 @@ public class MqttVerticleServer extends AbstractVerticle {
         }else {
 
           logger.debug("成功=======================");
-          accept(endpoint, new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport()));
+          accept(endpoint, new MqttDeviceSession(endpoint));
         }
       });
 
@@ -103,7 +110,8 @@ public class MqttVerticleServer extends AbstractVerticle {
       //处理客户端发布的消息
       endpoint.publishHandler(message -> {
         System.out.println(endpoint.clientIdentifier());
-        handleMqttMessage( new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport()), endpoint, message);
+        Function<String, DeviceOperation> operationSupplier =  x-> deviceRegistry.getDevice(x);
+        handleMqttMessage( new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport(),operationSupplier), endpoint, message);
         logger.debug("客户端topic:       "+message.topicName()+"客户端消息 [" + message.payload().toString(Charset.defaultCharset()) + " 级别 QoS [" + message.qosLevel() + "]");
         if (message.qosLevel() == MqttQoS.AT_LEAST_ONCE) {
           endpoint.publishAcknowledge(message.messageId());
@@ -196,7 +204,7 @@ public class MqttVerticleServer extends AbstractVerticle {
 
       }
 
-      endpoint.subscribeAcknowledge(subscribe.messageId(), grantedQosLevels);
+          endpoint.subscribeAcknowledge(subscribe.messageId(), grantedQosLevels);
 
        });
     }
@@ -215,7 +223,7 @@ public class MqttVerticleServer extends AbstractVerticle {
       VertxMqttMessage encodeMessage = new VertxMqttMessage(deviceId, message);
 
       // 转换消息
-      DeviceMessage deviceMessage = decodeMessage(session, endpoint, encodeMessage);
+       DeviceMessage deviceMessage = decodeMessage(session, endpoint, encodeMessage);
 
       // 处理消息回复
 
@@ -235,9 +243,44 @@ public class MqttVerticleServer extends AbstractVerticle {
   }
 
   protected DeviceMessage decodeMessage(DeviceSession session, MqttEndpoint endpoint , VertxMqttMessage message ){
-    String deviceId = message.deviceId();
-    session.protocolSupport();
-    return null;
+     String deviceId = message.deviceId();
+    return  session.protocolSupport().messageCodec().decode(Transport.MQTT, new FromDeviceMessageContext() {
+       @Override
+       public void sendToDevice(EncodedMessage message) {
+         session.send(message);
+       }
+
+       @Override
+       public void disconnect() {
+         doCloseEndpoint(endpoint, deviceId);
+       }
+
+       @Override
+       public EncodedMessage message() {
+         return message;
+       }
+
+       //
+       @Override
+       public DeviceOperation deviceOperation() {
+         return session.operation();
+       }
+     });
+
+
 
   }
+
+  protected void  doCloseEndpoint(MqttEndpoint client ,String  deviceId ) {
+    logger.debug("关闭客户端[{}]MQTT连接", deviceId);
+    DeviceSession old = deviceSessionManager.unregister(deviceId);
+
+    if (old == null) {
+      if (client.isConnected()) {
+        client.close();
+      }
+    }
+  }
+
+
   }
