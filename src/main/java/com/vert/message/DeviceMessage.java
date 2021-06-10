@@ -19,7 +19,7 @@ public interface DeviceMessage extends Jsonable , Serializable {
    * @param value
    * @return
    */
-  DeviceMessage  addHeader(String header , Any value);
+  DeviceMessage  addHeader(String header , Object value);
 
   /**
    * 删除一个header
@@ -28,7 +28,7 @@ public interface DeviceMessage extends Jsonable , Serializable {
    */
   DeviceMessage  removeHeader(String header );
 
-  default  Any getHeader(String header) {
+  default  Object getHeader(String header) {
     return headers().get(header);
   }
 }

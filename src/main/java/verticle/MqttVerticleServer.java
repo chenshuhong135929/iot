@@ -88,18 +88,7 @@ public class MqttVerticleServer extends AbstractVerticle {
         }
       });
 
-     /* //处理客户端订阅请求
-      endpoint.subscribeHandler(subscribe -> {
 
-        List<MqttQoS> grantedQosLevels = new ArrayList<>();
-        for (MqttTopicSubscription s : subscribe.topicSubscriptions()) {
-          logger.debug("订阅 " + s.topicName() + " 级别 QoS " + s.qualityOfService().value());
-          grantedQosLevels.add(s.qualityOfService());
-        }
-        endpoint.subscribeAcknowledge(subscribe.messageId(), grantedQosLevels);
-
-      });*/
-      //处理客户端取消订阅请求
       endpoint.unsubscribeHandler(unsubscribe -> {
         for (String t : unsubscribe.topics()) {
           logger.debug("取消订阅 " + t);
@@ -109,7 +98,7 @@ public class MqttVerticleServer extends AbstractVerticle {
 
       //处理客户端发布的消息
       endpoint.publishHandler(message -> {
-        System.out.println(endpoint.clientIdentifier());
+
         Function<String, DeviceOperation> operationSupplier =  x-> deviceRegistry.getDevice(x);
         handleMqttMessage( new MqttDeviceSession(endpoint,new M2MIoTProtocolSupport(),operationSupplier), endpoint, message);
         logger.debug("客户端topic:       "+message.topicName()+"客户端消息 [" + message.payload().toString(Charset.defaultCharset()) + " 级别 QoS [" + message.qosLevel() + "]");
