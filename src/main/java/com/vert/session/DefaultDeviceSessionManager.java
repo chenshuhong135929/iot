@@ -1,6 +1,7 @@
 package com.vert.session;
 
 import com.vert.message.DeviceMessage;
+import com.vert.message.DeviceMessageReply;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 
@@ -45,7 +46,6 @@ public class DefaultDeviceSessionManager implements  DeviceSessionManager {
   @Override
   public DeviceSession register(DeviceSession session) {
     DeviceSession old = repository.put(session.deviceId(), session);
-    log.info("当前注册的用户总量===== "+repository.size());
     if (old != null) {
       // 清空sessionId不同
       if ( old.id() != old.deviceId()) {
@@ -73,7 +73,11 @@ public class DefaultDeviceSessionManager implements  DeviceSessionManager {
   }
 
   @Override
-  public void handleDeviceMessageReply(DeviceSession session, DeviceMessage reply) {
+  public void handleDeviceMessageReply(DeviceSession session, DeviceMessageReply reply) {
+
+    if(reply.message().isEmpty()){
+      log.warn("消息无messageId:{}", reply.toJson());
+    }
 
   }
 

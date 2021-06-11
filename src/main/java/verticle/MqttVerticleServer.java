@@ -4,6 +4,7 @@ import com.iot.core.device.DeviceOperation;
 import com.iot.core.device.DeviceRegistry;
 import com.vert.core.support.M2MIoTProtocolSupport;
 import com.vert.message.DeviceMessage;
+import com.vert.message.DeviceMessageReply;
 import com.vert.message.codec.EncodedMessage;
 import com.vert.message.codec.FromDeviceMessageContext;
 import com.vert.message.codec.Transport;
@@ -211,12 +212,12 @@ public class MqttVerticleServer extends AbstractVerticle {
 
       VertxMqttMessage encodeMessage = new VertxMqttMessage(deviceId, message);
 
+
       // 转换消息
        DeviceMessage deviceMessage = decodeMessage(session, endpoint, encodeMessage);
 
       // 处理消息回复
-
-        deviceSessionManager.handleDeviceMessageReply(session, deviceMessage);
+         deviceSessionManager.handleDeviceMessageReply(session, deviceMessage);
 
 
 

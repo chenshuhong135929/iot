@@ -7,11 +7,19 @@ import java.io.Serializable;
 import java.util.Map;
 
 public interface DeviceMessage extends Jsonable , Serializable {
+
+
+
   String messageId();
+
+
   String deviceId();
+
+
   Long timestamp();
 
-  Map<String, Any> headers();
+
+  Map<String, Object> headers();
 
   /**
    * 添加一个header
@@ -27,6 +35,8 @@ public interface DeviceMessage extends Jsonable , Serializable {
    * @return
    */
   DeviceMessage  removeHeader(String header );
+
+
 
   default  Object getHeader(String header) {
     return headers().get(header);

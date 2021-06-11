@@ -1,5 +1,6 @@
 package com.vert.core.support;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.vert.message.DataMsg;
 import com.vert.message.DeviceMessage;
@@ -28,8 +29,9 @@ public class M2MIoTMQTTDeviceMessageCodec implements TransportDeviceMessageCodec
   public DeviceMessage decode(MessageDecodeContext context) {
     MqttMessage message=(MqttMessage) context.message();
     String topic = message.getTopic();
-
-    return null;
+    return decode(
+        topic,
+        JSON.parseObject(message.getByteBuf().array(), JSONObject.class)).message;
   }
 
   @Data
@@ -46,6 +48,7 @@ public class M2MIoTMQTTDeviceMessageCodec implements TransportDeviceMessageCodec
         break;
 
     }
+
     return result;
   }
 

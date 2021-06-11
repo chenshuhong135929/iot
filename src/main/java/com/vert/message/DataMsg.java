@@ -1,9 +1,8 @@
 package com.vert.message;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
-import org.omg.CORBA.Any;
-
 import java.util.Map;
 
 /**
@@ -15,14 +14,23 @@ import java.util.Map;
 public class DataMsg  implements  DeviceMessage{
 
 
+
+  private  String messageId;
+
+  private  String deviceId;
+
+  private  String code;
+
+  private   Map<String, Object> headers;
+
   @Override
   public String messageId() {
-    return null;
+    return this.messageId;
   }
 
   @Override
   public String deviceId() {
-    return null;
+    return this.deviceId;
   }
 
   @Override
@@ -31,27 +39,32 @@ public class DataMsg  implements  DeviceMessage{
   }
 
   @Override
-  public Map<String, Any> headers() {
-    return null;
+  public Map<String, Object> headers() {
+    return headers;
   }
 
   @Override
   public DeviceMessage addHeader(String header, Object value) {
-    return null;
+    headers.put(header,value);
+    return this;
   }
 
   @Override
   public DeviceMessage removeHeader(String header) {
-    return null;
+    headers.remove(header);
+    return this;
   }
 
   @Override
   public JSONObject toJson() {
-    return null;
+    return (JSONObject) JSON.toJSON(this);
   }
 
   @Override
   public void fromJson(JSONObject jsonObject) {
-
+    deviceId = jsonObject.getString("deviceId");
+    messageId = jsonObject.getString("messageId");
+    code = jsonObject.getString("code");
+    this.headers = jsonObject.getJSONObject("headers");
   }
 }

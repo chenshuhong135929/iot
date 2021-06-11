@@ -1,14 +1,19 @@
 package verticle;
 
+import com.vert.message.DataMsg;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
 import io.vertx.mqtt.MqttClient;
 import io.vertx.mqtt.MqttClientOptions;
 
 import java.nio.charset.Charset;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,14 +51,24 @@ public class MqttVerticleClient {
         CompletableFuture.runAsync(()->{
           while (true){
             try {
+              Map<String, Object> map = new HashMap<>();
+              map.put("header1","header111111");
+              map.put("header2","header222222");
+
+              JsonObject jsonObject =new JsonObject();
+              jsonObject.put("messageId","小明");
+              jsonObject.put("headers",map);
+              jsonObject.put("deviceId","设备1");
+
+
               Thread.sleep(5000);
-                client.publish("userTopic", Buffer.buffer("One "+ k.toString()),MqttQoS.EXACTLY_ONCE,false,false,x->{
+                client.publish("/read-property-reply", Buffer.buffer(jsonObject.toString()),MqttQoS.EXACTLY_ONCE,false,false,x->{
                 logger.debug("发送订阅信息是否成功 :{} ", x.succeeded());
               });
 
               k.getAndIncrement();
             }catch (Exception e){
-
+              logger.error(e);
             }
 
           }

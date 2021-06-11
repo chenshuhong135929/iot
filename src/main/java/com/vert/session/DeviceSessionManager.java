@@ -1,6 +1,7 @@
 package com.vert.session;
 
 import com.vert.message.DeviceMessage;
+import com.vert.message.DeviceMessageReply;
 
 /**
  *
@@ -31,7 +32,7 @@ public interface DeviceSessionManager {
    * @param reply 上报的消息
 
    */
-  void handleDeviceMessageReply(DeviceSession session  , DeviceMessage reply );
+  void handleDeviceMessageReply(DeviceSession session  , DeviceMessageReply reply );
 
   /**
    * 使用会话ID或者设备ID注销设备会话
