@@ -216,8 +216,16 @@ public class MqttVerticleServer extends AbstractVerticle {
       // 转换消息
        DeviceMessage deviceMessage = decodeMessage(session, endpoint, encodeMessage);
 
+
+
       // 处理消息回复
-         deviceSessionManager.handleDeviceMessageReply(session, deviceMessage);
+      if(deviceMessage instanceof DeviceMessageReply ){
+        DeviceMessageReply  deviceMessageReply =(DeviceMessageReply) deviceMessage;
+        deviceSessionManager.handleDeviceMessageReply(session, deviceMessageReply);
+      }
+
+
+
 
 
 

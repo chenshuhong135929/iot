@@ -1,6 +1,5 @@
 package com.vert.session;
 
-import com.vert.message.DeviceMessage;
 import com.vert.message.DeviceMessageReply;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.Log4JLoggerFactory;

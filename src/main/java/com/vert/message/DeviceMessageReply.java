@@ -2,7 +2,7 @@ package com.vert.message;
 
 import com.iot.core.enums.ErrorCode;
 
-public interface DeviceMessageReply extends  DeviceMessage{
+public interface DeviceMessageReply extends     DeviceMessage{
 
 
   String  code();
@@ -11,7 +11,7 @@ public interface DeviceMessageReply extends  DeviceMessage{
 
   DeviceMessageReply error(ErrorCode errorCode);
 
-  DeviceMessageReply error(Throwable e );
+  DeviceMessageReply error(Throwable e);
 
   DeviceMessageReply deviceId(String deviceId);
 
@@ -19,9 +19,9 @@ public interface DeviceMessageReply extends  DeviceMessage{
 
   DeviceMessageReply code(String code);
 
-  DeviceMessageReply  message(String message );
+  DeviceMessageReply  message(String message);
 
-  DeviceMessageReply  from(DeviceMessage message );
+  DeviceMessageReply  from(DeviceMessage message);
 
-  DeviceMessageReply  messageId(String messageId );
+  DeviceMessageReply  messageId(String messageId);
 }

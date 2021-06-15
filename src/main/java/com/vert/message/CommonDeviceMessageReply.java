@@ -2,6 +2,7 @@ package com.vert.message;
 
 import com.alibaba.fastjson.JSONObject;
 import com.iot.core.enums.ErrorCode;
+import lombok.Data;
 
 import java.util.Map;
 
@@ -9,7 +10,8 @@ import java.util.Map;
  * @Auther ChenShuHong
  * @Date 2021-06-11 14:45
  */
-public class CommonDeviceMessageReply  implements  DeviceMessageReply {
+@Data
+public class CommonDeviceMessageReply implements  DeviceMessageReply {
   @Override
   public String code() {
     return null;

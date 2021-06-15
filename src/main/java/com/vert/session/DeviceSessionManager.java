@@ -1,6 +1,5 @@
 package com.vert.session;
 
-import com.vert.message.DeviceMessage;
 import com.vert.message.DeviceMessageReply;
 
 /**
